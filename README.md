@@ -22,7 +22,7 @@ It ensures **consistency across devices** while remaining modular and extensible
 ### Quick Start
 
 ```bash
-git clone https://github.com/armbian/build
+git clone https://github.com/xiaobao1980/build
 cd build
 ./compile.sh
 ```
