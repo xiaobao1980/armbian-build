@@ -1,0 +1,123 @@
+&dsi {
+	status = "okay";
+	rockchip,lane-rate = <420>;
+	dsi_panel: panel@0 {
+		status = "okay";
+		compatible = "simple-panel-dsi";
+		reg = <0>;
+		backlight = <&backlight>;
+		reset-delay-ms = <6>;
+		enable-delay-ms = <35>;
+		prepare-delay-ms = <10>;
+		unprepare-delay-ms = <0>;
+		disable-delay-ms = <20>;
+        power-supply = <&vcc3v3_lcd_n>;
+        reset-gpios = <&gpio3 RK_PA2 GPIO_ACTIVE_HIGH>;
+        enable-gpios = <&gpio3 RK_PA3 GPIO_ACTIVE_HIGH>;
+		width-mm = <68>;
+		height-mm = <121>;
+		dsi,flags = <(MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST | 
+			    MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET)>;
+		dsi,format = <MIPI_DSI_FMT_RGB888>;
+		dsi,lanes  = <4>;
+
+		panel-init-sequence = [
+            29 00 06 3C 01 05 00 03 00
+            29 00 06 14 01 03 00 00 00
+            29 00 06 64 01 04 00 00 00
+            29 00 06 68 01 04 00 00 00
+            29 00 06 6C 01 04 00 00 00
+            29 00 06 70 01 04 00 00 00
+            29 00 06 34 01 1F 00 00 00
+            29 00 06 10 02 1F 00 00 00
+            29 00 06 04 01 01 00 00 00
+            29 00 06 04 02 01 00 00 00
+            29 00 06 50 04 00 01 F0 03
+            29 00 06 54 04 20 00 30 00
+            29 00 06 58 04 00 05 50 00
+            29 00 06 5C 04 05 00 03 00
+            29 00 06 60 04 20 03 06 00
+            29 00 06 64 04 01 00 00 00
+            29 01 06 A0 04 06 80 44 00
+            29 00 06 A0 04 06 80 04 00
+            29 00 06 04 05 04 00 00 00
+            29 00 06 80 04 00 01 02 03
+            29 00 06 84 04 04 07 05 08
+            29 00 06 88 04 09 0A 0E 0F
+            29 00 06 8C 04 0B 0C 0D 10
+            29 00 06 90 04 16 17 11 12
+            29 00 06 94 04 13 14 15 1B
+            29 00 06 98 04 18 19 1A 06
+            29 02 06 9C 04 31 00 00 00
+		];
+
+		panel-exit-sequence = [
+			05 00 01 28
+			05 00 01 10
+		];
+
+		disp_timings0: display-timings {
+			native-mode = <&dsi_timing0>;
+			dsi_timing0: timing0 {
+				clock-frequency = <71000000>;
+				hactive = <1280>;
+				vactive = <800>;
+				hfront-porch = <48>;
+				hsync-len = <32>;
+				hback-porch = <80>;
+				vfront-porch = <3>;
+				vsync-len = <5>;
+				vback-porch = <6>;
+				hsync-active = <0>;
+				vsync-active = <0>;
+				de-active = <0>;
+				pixelclk-active = <0>;
+			};
+		};
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				reg = <0>;
+				panel_in_dsi: endpoint {
+					remote-endpoint = <&dsi_out_panel>;
+				};
+			};
+		};
+	};
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@1 {
+			reg = <1>;
+			dsi_out_panel: endpoint {
+				remote-endpoint = <&panel_in_dsi>;
+			};
+		};
+	};
+
+};
+
+&dsi_in_vp0 {
+	status = "disabled";
+};
+
+&dsi_in_vp1 {
+	status = "okay";
+};
+
+&dsi_in_vp2 {
+	status = "disabled";
+};
+
+&dsi_in_vopl {
+	status = "disabled";
+};
+
+&route_dsi {
+	status = "okay";
+};

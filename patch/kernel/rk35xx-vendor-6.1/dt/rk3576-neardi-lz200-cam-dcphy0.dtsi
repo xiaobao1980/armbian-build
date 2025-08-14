@@ -1,0 +1,197 @@
+/* neardi lz200 */
+/* CAM0_RST GPIO3_D5 */
+/* CAM0_PDN GPIO3_C7 */
+/* CAM0_EN GPIO3_D0 */
+&{/} {
+	vcc_mipidcphy0: vcc-mipidcphy0-regulator {
+		compatible = "regulator-fixed";
+		gpio = <&gpio3 RK_PD0 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&mipidcphy0_pwr>;
+		regulator-name = "vcc_mipidcphy0";
+		enable-active-high;
+		status = "okay";
+	};
+};
+/* sensor0 --> csi2_dcphy0 --> mipi0_csi2 --> rkcif_mipi_lvds */
+/* rkcif_mipi_lvds_sditf --> rkisp_vir0 */
+&csi2_dcphy0 {
+	status = "okay";
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		port@0 {
+			reg = <0>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			mipi_in_ucam0: endpoint@0 {
+				reg = <0>;
+				remote-endpoint = <&ov13855_out0>;
+				data-lanes = <1 2 3 4>;
+			};
+		};
+		port@1 {
+			reg = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			csidcphy0_out: endpoint@0 {
+				reg = <0>;
+				remote-endpoint = <&mipi0_csi2_input>;
+			};
+		};
+	};
+};
+
+&i2c3 {
+	status = "okay";
+	pinctrl-0 = <&i2c3m0_xfer>;
+
+    ov138550: ov13855@10 {
+        compatible = "ovti,ov13855";
+        status = "okay";
+        reg = <0x10>;
+        clocks = <&cru CLK_MIPI_CAMERAOUT_M0>;
+        clock-names = "xvclk";
+        power-domains = <&power RK3576_PD_VI>;
+        pinctrl-names = "default";
+        pinctrl-0 = <&cam_clk0m0_clk0
+					 &cam0_rst
+					 &cam0_pwdn>;
+        rockchip,grf = <&sys_grf>;
+        reset-gpios = <&gpio3 RK_PD5 GPIO_ACTIVE_HIGH>;
+        pwdn-gpios = <&gpio3 RK_PC7 GPIO_ACTIVE_HIGH>;
+        avdd-supply = <&vcc_mipidcphy0>;
+        rockchip,camera-module-index = <0>;
+        rockchip,camera-module-facing = "back";
+        rockchip,camera-module-name = "CMK-OT2016-FV1";
+        rockchip,camera-module-lens-name = "default";
+        port {
+            ov13855_out0: endpoint {
+                remote-endpoint = <&mipi_in_ucam0>;
+                data-lanes = <1 2 3 4>;
+            };
+        };
+    };
+};
+
+&mipi0_csi2 {
+	status = "okay";
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@0 {
+			reg = <0>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			mipi0_csi2_input: endpoint@1 {
+				reg = <1>;
+				remote-endpoint = <&csidcphy0_out>;
+			};
+		};
+
+		port@1 {
+			reg = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			mipi0_csi2_output: endpoint@0 {
+				reg = <0>;
+				remote-endpoint = <&cif_mipi_in0>;
+			};
+		};
+	};
+};
+
+&rkcif_mmu {
+	status = "okay";
+};
+
+&rkcif {
+	status = "okay";
+};
+
+&rkcif_mipi_lvds {
+	status = "okay";
+
+	port {
+		cif_mipi_in0: endpoint {
+			remote-endpoint = <&mipi0_csi2_output>;
+		};
+	};
+};
+
+&rkcif_mipi_lvds_sditf {
+	status = "okay";
+
+	port {
+		mipi_lvds_sditf: endpoint {
+			remote-endpoint = <&isp_vir0>;
+		};
+	};
+};
+
+&rkisp {
+	status = "okay";
+};
+
+&rkisp_mmu {
+	status = "okay";
+};
+
+&rkisp_vir0 {
+	status = "okay";
+
+	port {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		isp_vir0: endpoint@0 {
+			reg = <0>;
+			remote-endpoint = <&mipi_lvds_sditf>;
+		};
+	};
+};
+
+&rkisp_vir0_sditf {
+	status = "okay";
+};
+
+&rkvpss {
+	status = "okay";
+};
+
+&rkvpss_mmu {
+	status = "okay";
+};
+
+&rkvpss_vir0 {
+	status = "okay";
+};
+
+&pinctrl {
+	cam0 {
+		mipidcphy0_pwr: mipidcphy0-pwr {
+			rockchip,pins =
+				/* camera power en */
+				<3 RK_PD0 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+
+		cam0_rst: cam0_rst {
+			rockchip,pins = 
+				/* camera reset */
+				<3 RK_PD5 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+
+		cam0_pwdn: cam0_pwdn {
+			rockchip,pins = 
+				/* camera power down */
+				<3 RK_PC7 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
+};

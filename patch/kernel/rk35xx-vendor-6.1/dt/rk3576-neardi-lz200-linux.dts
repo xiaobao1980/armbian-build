@@ -1,0 +1,26 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2024 Rockchip Electronics Co., Ltd.
+ *
+ */
+
+/dts-v1/;
+
+#include "rk3576.dtsi"
+#include "rk3576-neardi-lz200.dtsi"
+#include "rk3576-linux.dtsi"
+#include "rk3576-neardi-lz200-hdmi.dtsi"
+#include "rk3576-neardi-lz200-gmac.dtsi"
+#include "rk3576-neardi-lz200-wifibt.dtsi"
+#include "rk3576-neardi-lz200-sound-ctl.dtsi"
+//#include "rk3576-neardi-lz200-mipi-dsi-to-lvds.dtsi"
+#include "rk3576-neardi-lz200-full-typec-phy.dtsi"
+#include "rk3576-neardi-lz200-misc-devices.dtsi"
+#include "rk3576-neardi-lz200-cam-dcphy0.dtsi"
+#include "rk3576-neardi-lz200-cam-dphy1.dtsi"
+#include "rk3576-neardi-lz200-cam-dphy3.dtsi"
+
+/ {
+	model = "Rockchip RK3576 EVB1 V10 Board";
+	compatible = "rockchip,rk3576-evb1-v10", "rockchip,rk3576";
+};
