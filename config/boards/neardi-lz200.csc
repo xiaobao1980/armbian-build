@@ -1,8 +1,8 @@
 # Rockchip RK3576 SoC octa core 8-64GB SoC 2*GBe eMMC USB3 NvME WIFI
 BOARD_NAME="Neardi lz200"
-BOARD_VENDOR="armsom"
+BOARD_VENDOR="Neardi"
 BOARDFAMILY="rk35xx"
-BOOTCONFIG="armsom-sige5-rk3576_defconfig"
+BOOTCONFIG="neardi-lz200-linux-rk3576_defconfig"
 KERNEL_TARGET="vendor,edge"
 FULL_DESKTOP="yes"
 BOOT_LOGO="desktop"
