@@ -1,0 +1,103 @@
+/* pcie */
+&pcie0 {
+	reset-gpios = <&gpio2 RK_PB1 GPIO_ACTIVE_HIGH>;
+	rockchip,skip-scan-in-resume;
+	pinctrl-name = "default";
+	pinctrl-0 = <&pcie_rst>;
+	status = "okay";
+};
+/* pcie device power enable */
+&{/} {
+	pcie_dev_pwren: pcie_dev_pwren {
+		compatible = "regulator-fixed";
+		regulator-name = "Pcie_Pwren";
+		regulator-boot-on;
+		enable-active-high;
+		regulator-always-on;
+		gpio = <&gpio0 RK_PD3 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pwren_pcie>;
+	};
+};
+/* 4G power */
+&{/} {
+	vcc_lte_en: vcc_lte_en {
+		compatible = "regulator-fixed";
+		regulator-name = "Lte_Pwren";
+		regulator-boot-on;
+		enable-active-high;
+		regulator-always-on;
+		gpio = <&gpio0 RK_PB6 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pwren_lte>;
+	};
+};
+/* can */
+&can0 {
+	assigned-clocks = <&cru CLK_CAN0>;
+	assigned-clock-rates = <200000000>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&can0m0_pins>;
+	status = "okay";
+};
+/* 485 */
+&uart5 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart5m2_xfer>;
+};
+/* led */
+&{/} {
+	leds: leds {
+		compatible = "gpio-leds";
+		work_led: work {
+			gpios = <&gpio2 RK_PD7 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "heartbeat";
+		};
+	};
+};
+/* usb type-A vbus */
+&{/} {
+	vcc_usb_vbus: vcc_usb_vbus {
+		compatible = "regulator-fixed";
+		regulator-name = "vbus_Pwren";
+		regulator-boot-on;
+		enable-active-high;
+		regulator-always-on;
+		gpio = <&gpio1 RK_PC7 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pwren_vbus>;
+	};
+};
+
+&gt1x {
+	status = "disabled";
+};
+
+&uart4 {
+	pinctrl-0 = <&uart4m1_xfer &uart4m1_ctsn &uart4m1_rtsn>;
+};
+
+&pinctrl {
+	lte {
+		pwren_lte: pwren_lte {
+			rockchip,pins = <0 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
+
+	pcie {
+		pcie_rst: pcie_rst {
+			rockchip,pins = <2 RK_PB1 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+
+		pwren_pcie: pwren_pcie {
+			rockchip,pins = <0 RK_PD3 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
+
+	usb {
+		pwren_vbus: pwren_vbus {
+			rockchip,pins = <1 RK_PC7 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
+};
