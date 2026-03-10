@@ -16,8 +16,7 @@ The framework supports **native**, **cross**, and **containerized** builds for m
 ## Quick Start
 
 ```bash
-git clone https://github.com/armbian/build
-cd build
+git clone https://github.com/xiaobao1980/armbian-build
 ./compile.sh
 ```
 
