@@ -3,6 +3,7 @@ BOARD_NAME="Neardi lz200"
 BOARD_VENDOR="Neardi"
 BOARDFAMILY="rk35xx"
 BOOTCONFIG="neardi-lz200-linux-rk3576_defconfig"
+#BOOTCONFIG="rk3576_defconfig"
 KERNEL_TARGET="vendor,edge"
 FULL_DESKTOP="yes"
 BOOT_LOGO="desktop"
@@ -11,13 +12,5 @@ BOOT_SCENARIO="spl-blobs"
 IMAGE_PARTITION_TABLE="gpt"
 BOARD_MAINTAINER=""
 
-function post_family_tweaks__armsom-sige7_naming_audios() {
-	display_alert "$BOARD" "Renaming armsom-sige7 audios" "info"
-
-	mkdir -p $SDCARD/etc/udev/rules.d/
-	echo 'SUBSYSTEM=="sound", ENV{ID_PATH}=="platform-hdmi0-sound", ENV{SOUND_DESCRIPTION}="HDMI0 Audio"' > $SDCARD/etc/udev/rules.d/90-naming-audios.rules
-	echo 'SUBSYSTEM=="sound", ENV{ID_PATH}=="platform-dp0-sound", ENV{SOUND_DESCRIPTION}="DP0 Audio"' >> $SDCARD/etc/udev/rules.d/90-naming-audios.rules
-	echo 'SUBSYSTEM=="sound", ENV{ID_PATH}=="platform-es8316-sound", ENV{SOUND_DESCRIPTION}="ES8316 Audio"' >> $SDCARD/etc/udev/rules.d/90-naming-audios.rules
-
-	return 0
-}
+# 内核补丁目录
+KERNELPATCHDIR="rk35xx-vendor"
