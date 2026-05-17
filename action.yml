@@ -114,7 +114,7 @@ runs:
 
     - name: Free Github Runner
       if: ${{ inputs.armbian_runner_clean != '' }}
-      uses: descriptinc/free-disk-space@main
+      uses: descriptinc/free-disk-space@1b4b157593c6801212a2ed488c205e0a810b4592 # main
       with:
         android: true
         dotnet: true
@@ -125,13 +125,13 @@ runs:
 
     - name: "Import GPG key"
       if: ${{ inputs.armbian_pgp_key != '' }}
-      uses: crazy-max/ghaction-import-gpg@v7
+      uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0
       with:
         gpg_private_key: ${{ inputs.armbian_pgp_key }}
         passphrase: ${{ inputs.armbian_pgp_password }}
 
     - name: "Checkout Armbian os"
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         repository: armbian/os
         fetch-depth: 1
@@ -139,7 +139,7 @@ runs:
         path: os
 
     - name: "Checkout Armbian build framework"
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         repository: armbian/build
         ref: ${{ inputs.armbian_branch }}
@@ -147,7 +147,7 @@ runs:
         path: build
 
     - name: "Checkout customisations"
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         fetch-depth: 0
         clean: false
@@ -205,8 +205,7 @@ runs:
           BUILD_DESKTOP="yes"
           BUILD_MINIMAL="no"
           DESKTOP_ENVIRONMENT="${{ inputs.armbian_ui }}"
-          DESKTOP_APPGROUPS_SELECTED=""
-          DESKTOP_ENVIRONMENT_CONFIG_NAME="config_base"
+          DESKTOP_TIER="mid"
         fi
 
         # go to build folder
@@ -226,8 +225,7 @@ runs:
         BUILD_DESKTOP="${BUILD_DESKTOP}" \
         BUILD_MINIMAL="${BUILD_MINIMAL}" \
         DESKTOP_ENVIRONMENT="${DESKTOP_ENVIRONMENT}" \
-        DESKTOP_APPGROUPS_SELECTED="${DESKTOP_APPGROUPS_SELECTED}" \
-        DESKTOP_ENVIRONMENT_CONFIG_NAME="${DESKTOP_ENVIRONMENT_CONFIG_NAME}" \
+        DESKTOP_TIER="${DESKTOP_TIER}" \
         ENABLE_EXTENSIONS="${{ inputs.armbian_extensions }}" \
         COMPRESS_OUTPUTIMAGE="${{ inputs.armbian_compress }}" \
         SHARE_LOG="yes" \
@@ -399,12 +397,16 @@ runs:
 
         # ── URL composition ──────────────────────────────────────────────────
         def signature_urls(base):
-            """Return (base, base.asc, base.sha, base.torrent)."""
-            return base, f"{base}.asc", f"{base}.sha", f"{base}.torrent"
+            """Return (base, base.asc, base.sha, ""). The build never
+            produces a .torrent for the assets it ships, so the torrent
+            slot is always empty — the field is kept for schema parity
+            with the canonical armbian-images.json index.
+            """
+            return base, f"{base}.asc", f"{base}.sha", ""
 
         def build_urls(parsed, image_format, img_name):
-            """Compose file_url + redi_url (each with its .asc/.sha/.torrent
-            siblings).
+            """Compose file_url + redi_url (each with its .asc/.sha
+            siblings; torrent slot is always empty — see signature_urls).
 
             Two URL shapes, selected by DOWNLOAD_REPO:
               non-empty -> {base}/{board}/{repo}/{filename}    dl.armbian.com style
@@ -521,7 +523,7 @@ runs:
         print(f"Total: {len(assets)} per-image assets manifest{'s' if len(assets) != 1 else ''}")
         PY
 
-    - uses: ncipollo/release-action@v1
+    - uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
       with:
         tag: ${{ inputs.armbian_release_tag != '' && inputs.armbian_release_tag || env.ARMBIAN_VERSION }}
         name: "${{ inputs.armbian_release_title }}"
